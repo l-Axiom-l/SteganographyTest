@@ -1,4 +1,4 @@
-using Axiom.Encryption;
+﻿using Axiom.Encryption;
 using System.Drawing;
 
 namespace SteganographyTest
@@ -10,13 +10,45 @@ namespace SteganographyTest
         public Form1()
         {
             InitializeComponent();
-            Image img = Bitmap.FromFile(@"C:\Users\momox\Pictures\approved-by-rubber-stamp-picture-id121995689.jpg");
-            graph = new Steganograph(img);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+
+
+        private void saveImage_Click(object sender, EventArgs e)
         {
-            graph.HideText("hi, im Moritz").Save(@"C:\Programmieren\Test\Test.bmp");
+            saveFileDialog1.Title = "Save Location";
+            saveFileDialog1.AddExtension = true;
+            DialogResult result = saveFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                MainImage.Image.Save(saveFileDialog1.FileName);
+            }
+        }
+
+        private void HT_Click(object sender, EventArgs e)
+        {
+            MainImage.Image = graph.HideText(MainText.Text);
+        }
+
+        private void GT_Click(object sender, EventArgs e)
+        {
+            MainText.Text = graph.FindHiddenString();
+        }
+
+        private void chooseFile_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Title = "Open Image";
+            openFileDialog1.CheckFileExists = true;
+            openFileDialog1.CheckPathExists = true;
+            DialogResult result = openFileDialog1.ShowDialog();
+            if(result == DialogResult.OK)
+            {
+                MainImage.Image = Image.FromFile(openFileDialog1.FileName);
+                graph = new Steganograph(MainImage.Image);
+                HT.Enabled = true;
+                GT.Enabled = true;
+                saveImage.Enabled = true;
+            }
         }
     }
 }

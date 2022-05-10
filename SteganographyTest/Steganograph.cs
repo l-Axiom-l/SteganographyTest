@@ -38,15 +38,19 @@ namespace Axiom.Encryption
 
         public Image HideText(string Text)
         {
+            //Man muss tuerst alle LSBs entfernen sonst funktioniert das entschlüsseln nicht.
             byte[] bytes = Encoding.ASCII.GetBytes(Text);
             int[] temp = BinaryConverter(bytes);
+
+            foreach (Vector2 v in Coordinates)
+                map.SetPixel((int)v.X, (int)v.Y, CalculateColor(map.GetPixel((int)v.X, (int)v.Y), 0));
 
             for (int i = 0; i < temp.Length; i++)
             {
                 Vector2 vector = Coordinates[i];
                 Color color = map.GetPixel((int)vector.X, (int)vector.Y);
                 int[] colorBytes = BinaryConverter(color.G);
-                colorBytes[6] = temp[i];
+                colorBytes[7] = temp[i];
                 byte test = BinaryConverter(colorBytes);
                 color = Color.FromArgb(color.R, test, color.B);
                 map.SetPixel((int)vector.X, (int)vector.Y, color);
@@ -56,17 +60,7 @@ namespace Axiom.Encryption
 
         public void HideImage(Image ImageToHide)
         {
-
-        }
-
-        public void SaveImage(string Path)
-        {
-
-        }
-
-        public Image GetImage()
-        {
-            return FinalImage;
+            
         }
 
         //public Image FindHiddenImage()
@@ -76,12 +70,37 @@ namespace Axiom.Encryption
         //    return temp;
         //}
 
-        //public string FindHiddenString()
-        //{
-        //    string temp;
+        public string FindHiddenString()
+        {
+            List<byte> temp = new List<byte>();
+            List<int> bits = new List<int>();
 
-        //    return temp;
-        //}
+            foreach (Vector2 vector in Coordinates)
+            {
+                Color color = map.GetPixel((int)vector.X, (int)vector.Y);
+                bits.Add(BinaryConverter(color.G)[7]);
+            }
+
+            int[][] bytes = bits.Chunk(8).ToArray();
+            
+            foreach(int[] i in bytes)
+            {
+                string b = "";
+                Array.ForEach(i, i=> b+= i.ToString());
+                temp.Add(Convert.ToByte(b, 2));
+            }
+
+            return Encoding.ASCII.GetString(temp.ToArray()) ?? "null";
+        }
+
+        Color CalculateColor(Color color, int bit)
+        {
+            int[] colorBytes = BinaryConverter(color.G);
+            colorBytes[7] = bit;
+            byte test = BinaryConverter(colorBytes);
+            color = Color.FromArgb(color.R, test, color.B);
+            return color;
+        }
 
         List<Vector2> GetCoordinates(Image image)
         {
@@ -100,7 +119,7 @@ namespace Axiom.Encryption
             List<int> result = new List<int>();
             foreach (byte b in array)
             {
-                char[] temp = Convert.ToString(b, 2).PadLeft(1, '0').ToCharArray();
+                char[] temp = Convert.ToString(b, 2).PadLeft(8, '0').ToCharArray();
                 Array.ForEach(temp, x => result.Add(Convert.ToInt32(x) - 48));
             }
             return result.ToArray();
@@ -109,7 +128,7 @@ namespace Axiom.Encryption
         int[] BinaryConverter(byte b)
         {
             List<int> result = new List<int>();
-            char[] temp = Convert.ToString(b, 2).PadLeft(1, '0').ToCharArray();
+            char[] temp = Convert.ToString(b, 2).PadLeft(8, '0').ToCharArray();
             Array.ForEach(temp, x => result.Add(Convert.ToInt32(x) - 48));
             return result.ToArray();
         }
