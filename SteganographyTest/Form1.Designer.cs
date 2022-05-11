@@ -36,6 +36,7 @@
             this.saveImage = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.MainImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -103,11 +104,25 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
+            this.linkLabel1.LinkColor = System.Drawing.Color.Black;
+            this.linkLabel1.Location = new System.Drawing.Point(12, 307);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(72, 20);
+            this.linkLabel1.TabIndex = 6;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "by Axiom";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 339);
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.saveImage);
             this.Controls.Add(this.chooseFile);
             this.Controls.Add(this.MainText);
@@ -132,5 +147,6 @@
         private Button saveImage;
         private OpenFileDialog openFileDialog1;
         private SaveFileDialog saveFileDialog1;
+        private LinkLabel linkLabel1;
     }
 }
